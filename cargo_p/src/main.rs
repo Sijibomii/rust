@@ -2,7 +2,15 @@ use std::convert::TryInto;
 use num::complex::Complex;//num dep 
 //(::)=>namespace operator. I.E only the Complex type is imported
 use std::time::{Duration, Instant}; 
+use std::ops::{Add};
+use std::time::{Duration};
 
+
+//generic types
+//can accepts only tyie that implements the base trait Add from std::ops
+ fn add<T: Add<Output = T>>(i: T, j: T) -> T {
+    i + j
+  }
  
 fn main() {
     let a = 10;
@@ -160,6 +168,32 @@ fn main() {
         _ => {},//matches every other value
     }
 
+    let haystack = [1, 1, 2, 5, 14, 42, 132, 429, 1430, 4862];
+ 
+    for item in &haystack {
+    let result = match item {
+        42 | 132 => "hit!",
+         _ => "miss",
+     };
+
+    if result == "hit!" {
+        println!("{}: {}", item, result);
+     }
+    }
+    let floats = add(1.2, 3.4);
+    let ints = add(10, 20);
+    let durations = add(Duration::new(5, 0), Duration::new(10, 0));
+
+    println!("{}", floats);
+    println!("{}", ints);
+    println!("{:?}", durations);
+
+    //arrays
+    let one = [1, 2, 3];
+    let two: [u8; 3] = [1, 2, 3];//[u8; 3] means and array of size 3 with only unsigned 8 bit allowed
+    let blank1 = [0; 3];
+    let blank2: [u8; 3] = [0; 3];
+   
     }
     // fn is_outlier()-> bool{
     //     return false
