@@ -27,6 +27,16 @@ impl<T> Deref for MyBox<T>{
     &self.0;
   }
 }
+
+struct CustomSmartPointer {
+  data: String,
+}
+// impl the drop trait for the struct
+impl Drop for CustomSmartPointer {
+  fn drop(&mut self){
+    println!("DROPPING CUSTOM SMART POINTER DATA {}", self.data);
+  }
+}
 fn main(){
   //We pass in the data we want to store on the heap and on the stack we store a pointer or a mem address 
   // to location of the data on the heap
@@ -52,7 +62,25 @@ fn main(){
 
   // AUTOMATIC DEREF COHESION
   let m = MyBox::new(String::from("This is rust"));
-  
+  // This works fine despite the fact that hello is expecting the pointer to a string slice but we're passing
+  // in the pointer to MyBox. This is bc of the automatic deref cohesion in rust
+  //it automatically helps us deref it to the point we get a str slice
+  hello(&m);
+
+  //without the ADC we would have written it this way
+  //derefing m to a string first and passing  a ref to a slice of that str (slice is the full hence [..])
+  hello(&(*m)[..]);
+
+  // After this pointers go out of scope, rust automatically calls the drop fn impl in the drop trait
+  //to impl our drop logic
+  let c = CustomSmartPointer{
+    data: String::from("my stuff"),
+  };
+
+  let d = CustomSmartPointer{
+    data: String::from("other stuff"),
+  };
+
 }
 
 fn hello(name: &str){
