@@ -1,4 +1,5 @@
 use std::ops::Deref;
+use std::rc::Rc;
 enum List{
   //wrapping the List input in a box helps the rust compiler calc the number of space that could be taken up
   //by the enum. The box smart pointer is a fixed sized pointer that could now be stored on the stack even tho it points
@@ -80,6 +81,9 @@ fn main(){
   let d = CustomSmartPointer{
     data: String::from("other stuff"),
   };
+
+  // REFERNCE COUNTING POINTERS: They can be used when a value can have more than one owners
+ 
 
 }
 
