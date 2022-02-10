@@ -1,5 +1,5 @@
 use std::{thread, time::Duration};
-use std::sync::mpsc;
+use std::sync::{mpsc, Mutex, Arc};
 
 fn main(){
   let handle = thread::spawn(||{
@@ -34,4 +34,30 @@ fn main(){
 
   let received = rx.recv().unwrap();
   println!("{}", received);
+
+  //mutex is an abbreiv for mutaul exclusion ie we allow just one thread access one piece of data at once
+  let m = Mutex::new(5);
+  {
+    //here we call the lock method to acquire the lock for the mutex
+    let mut num = m.lock().unwrap();
+    *m = 6; //manipulate m bc we have the lock
+  }
+  // Arc(Atomic Reference Smart pointer is exactly the same as Rc but it is thread safe)
+  let counter = Arc::new(Mutex::new(0));
+  let mut handles = vec![];
+  for _ 0..10{
+    let counter = Arc::clone(&counter);
+    //the move keyword here indicates that every variable used in this thread will have its ownership moved to the thread
+    let handle = thread::spawn(move ||{
+      let mut num = counter.lock().unwrap();
+      *num +=1;
+    });
+    handles.push(handle);
+  }
+
+  for handle in handles{
+    handle.join().unwrap();
+  }
+  // result should be 10
+  println!("Result: {}", *counter.lock().unwrap());
 }
